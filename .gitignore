@@ -1,0 +1,29 @@
+# UE5 Project Files
+*.tmp
+*.temp
+Intermediate/
+Binaries/
+DerivedDataCache/
+.vs/
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
+# Source Code Backup Files
+*.orig
+
+# Crash Reports
+[Gg]enerated/
+crashlytics-build.properties
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+.vscode/
