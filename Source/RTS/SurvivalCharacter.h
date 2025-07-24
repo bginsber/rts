@@ -6,7 +6,7 @@
 #include "SurvivalCharacter.generated.h"
 
 UENUM(BlueprintType)
-enum class EMovementMode : uint8
+enum class ESurvivalMovementMode : uint8
 {
     Walk    UMETA(DisplayName = "Walk"),
     Jog     UMETA(DisplayName = "Jog"),
@@ -41,7 +41,7 @@ protected:
     USurvivalMovementComponent* SurvivalMovementComponent;
 
     UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Movement")
-    EMovementMode CurrentMovementMode;
+    ESurvivalMovementMode CurrentMovementMode;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
     float WalkSpeed;
@@ -62,24 +62,24 @@ private:
     float TargetSpeed;
     float CurrentTransitionTime;
     
-    TArray<EMovementMode> InputBuffer;
+    TArray<ESurvivalMovementMode> InputBuffer;
     float LastInputTime;
 
 public:
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
-    void SetMovementMode(EMovementMode NewMode);
+    void SetMovementMode(ESurvivalMovementMode NewMode);
 
     // Server RPCs for networked movement
     UFUNCTION(Server, Reliable, WithValidation, Category = "Movement")
-    void ServerSetMovementMode(EMovementMode NewMode);
+    void ServerSetMovementMode(ESurvivalMovementMode NewMode);
 
     UFUNCTION(NetMulticast, Reliable, Category = "Movement")
-    void MulticastSetMovementMode(EMovementMode NewMode);
+    void MulticastSetMovementMode(ESurvivalMovementMode NewMode);
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
-    EMovementMode GetCurrentMovementMode() const { return CurrentMovementMode; }
+    ESurvivalMovementMode GetCurrentMovementMode() const { return CurrentMovementMode; }
 
     UFUNCTION(BlueprintCallable, Category = "Survival")
     USurvivalStaminaComponent* GetStaminaComponent() const { return StaminaComponent; }
@@ -97,5 +97,5 @@ protected:
 
     void UpdateMovementSpeed();
     void ProcessInputBuffer();
-    void AddToInputBuffer(EMovementMode Mode);
+    void AddToInputBuffer(ESurvivalMovementMode Mode);
 };

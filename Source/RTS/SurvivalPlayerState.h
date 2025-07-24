@@ -24,7 +24,7 @@ public:
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-protected:
+public:
     // Survival Metrics
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Survival")
     float CurrentCalories;
@@ -47,6 +47,8 @@ protected:
 
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Team")
     float TetherDistance;
+
+protected:
 
     // Player Specialization
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Specialization")

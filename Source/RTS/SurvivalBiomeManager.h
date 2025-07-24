@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
-#include "Landscape/Classes/Landscape.h"
 #include "SurvivalBiomeManager.generated.h"
 
 UENUM(BlueprintType)
@@ -57,10 +56,13 @@ protected:
     virtual void BeginPlay() override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Landscape")
-    class ALandscape* RaceLandscape;
+    class AActor* RaceLandscape;
 
+public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Biomes")
     TArray<FBiomeZone> BiomeZones;
+
+protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Race Route")
     TArray<FVector> RaceCheckpoints;
@@ -90,7 +92,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Terrain")
     float GetElevationAtLocation(const FVector& WorldLocation) const;
 
-    UFUNCTION(BlueprintCallable, Category = "Terrain")
+    UFUNCTION(Category = "Terrain")
     void ApplyHeightmapFromArray(const TArray<uint16>& HeightData);
 
 private:

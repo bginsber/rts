@@ -55,10 +55,10 @@ void USurvivalMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
     }
 
     // Handle footstep audio timing
-    if (GetCurrentVelocity().Size() > 50.0f) // Only when moving
+    if (Velocity.Size() > 50.0f) // Only when moving
     {
         FootstepTimer += DeltaTime;
-        float AdjustedInterval = FootstepInterval / FMath::Max(GetCurrentVelocity().Size() / 300.0f, 0.5f);
+        float AdjustedInterval = FootstepInterval / FMath::Max(Velocity.Size() / 300.0f, 0.5f);
         
         if (FootstepTimer >= AdjustedInterval)
         {

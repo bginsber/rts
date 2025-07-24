@@ -24,7 +24,7 @@ protected:
     bool bIsInAir;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
-    EMovementMode MovementMode;
+    ESurvivalMovementMode MovementMode;
 
     UPROPERTY(BlueprintReadOnly, Category = "Movement")
     float Direction;

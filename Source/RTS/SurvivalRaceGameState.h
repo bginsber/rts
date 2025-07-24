@@ -11,19 +11,19 @@ struct FTeamInfo
 {
     GENERATED_BODY()
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(BlueprintReadOnly)
     TArray<ASurvivalPlayerState*> TeamMembers;
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(BlueprintReadOnly)
     float TeamCohesionScore;
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(BlueprintReadOnly)
     float TotalDistanceTraveled;
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(BlueprintReadOnly)
     bool bIsEliminated;
 
-    UPROPERTY(Replicated, BlueprintReadOnly)
+    UPROPERTY(BlueprintReadOnly)
     int32 TeamID;
 
     FTeamInfo()
@@ -45,7 +45,7 @@ public:
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-protected:
+public:
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Teams")
     TArray<FTeamInfo> ActiveTeams;
 
@@ -63,8 +63,6 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Race Config")
     int32 PlayersPerTeam;
-
-public:
     UFUNCTION(BlueprintCallable, Category = "Teams")
     int32 AssignPlayerToTeam(ASurvivalPlayerState* PlayerState);
 

@@ -18,7 +18,7 @@ ASurvivalCharacter::ASurvivalCharacter()
     JogSpeed = 320.0f;   // 3.2 speed multiplier from base  
     SprintSpeed = 500.0f; // 5.0 speed multiplier from base
 
-    CurrentMovementMode = EMovementMode::Walk;
+    CurrentMovementMode = ESurvivalMovementMode::Walk;
     
     // Initialize smooth transition parameters
     TransitionSpeed = 3.0f; // Speed of transitions between modes
@@ -109,7 +109,7 @@ void ASurvivalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
     PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASurvivalCharacter::SwitchToSprint);
 }
 
-void ASurvivalCharacter::SetMovementMode(EMovementMode NewMode)
+void ASurvivalCharacter::SetMovementMode(ESurvivalMovementMode NewMode)
 {
     if (HasAuthority())
     {
@@ -128,18 +128,18 @@ void ASurvivalCharacter::SetMovementMode(EMovementMode NewMode)
     }
 }
 
-void ASurvivalCharacter::ServerSetMovementMode_Implementation(EMovementMode NewMode)
+void ASurvivalCharacter::ServerSetMovementMode_Implementation(ESurvivalMovementMode NewMode)
 {
     SetMovementMode(NewMode);
 }
 
-bool ASurvivalCharacter::ServerSetMovementMode_Validate(EMovementMode NewMode)
+bool ASurvivalCharacter::ServerSetMovementMode_Validate(ESurvivalMovementMode NewMode)
 {
     // Basic validation - mode should be valid enum value
-    return NewMode >= EMovementMode::Walk && NewMode <= EMovementMode::Sprint;
+    return NewMode >= ESurvivalMovementMode::Walk && NewMode <= ESurvivalMovementMode::Sprint;
 }
 
-void ASurvivalCharacter::MulticastSetMovementMode_Implementation(EMovementMode NewMode)
+void ASurvivalCharacter::MulticastSetMovementMode_Implementation(ESurvivalMovementMode NewMode)
 {
     if (!HasAuthority())
     {
@@ -151,30 +151,30 @@ void ASurvivalCharacter::MulticastSetMovementMode_Implementation(EMovementMode N
 
 void ASurvivalCharacter::SwitchToWalk()
 {
-    AddToInputBuffer(EMovementMode::Walk);
+    AddToInputBuffer(ESurvivalMovementMode::Walk);
 }
 
 void ASurvivalCharacter::SwitchToJog()
 {
-    AddToInputBuffer(EMovementMode::Jog);
+    AddToInputBuffer(ESurvivalMovementMode::Jog);
 }
 
 void ASurvivalCharacter::SwitchToSprint()
 {
-    AddToInputBuffer(EMovementMode::Sprint);
+    AddToInputBuffer(ESurvivalMovementMode::Sprint);
 }
 
 void ASurvivalCharacter::UpdateMovementSpeed()
 {
     switch (CurrentMovementMode)
     {
-    case EMovementMode::Walk:
+    case ESurvivalMovementMode::Walk:
         TargetSpeed = WalkSpeed;
         break;
-    case EMovementMode::Jog:
+    case ESurvivalMovementMode::Jog:
         TargetSpeed = JogSpeed;
         break;
-    case EMovementMode::Sprint:
+    case ESurvivalMovementMode::Sprint:
         TargetSpeed = SprintSpeed;
         break;
     }
@@ -185,14 +185,14 @@ void ASurvivalCharacter::ProcessInputBuffer()
     float CurrentTime = GetWorld()->GetTimeSeconds();
     
     // Clear old inputs from buffer
-    InputBuffer.RemoveAll([&](const EMovementMode& Mode) {
+    InputBuffer.RemoveAll([&](const ESurvivalMovementMode& Mode) {
         return (CurrentTime - LastInputTime) > InputBufferTime;
     });
     
     // Process the most recent input if any
     if (InputBuffer.Num() > 0)
     {
-        EMovementMode NewMode = InputBuffer.Last();
+        ESurvivalMovementMode NewMode = InputBuffer.Last();
         if (CurrentMovementMode != NewMode)
         {
             CurrentMovementMode = NewMode;
@@ -202,7 +202,7 @@ void ASurvivalCharacter::ProcessInputBuffer()
     }
 }
 
-void ASurvivalCharacter::AddToInputBuffer(EMovementMode Mode)
+void ASurvivalCharacter::AddToInputBuffer(ESurvivalMovementMode Mode)
 {
     LastInputTime = GetWorld()->GetTimeSeconds();
     InputBuffer.Add(Mode);

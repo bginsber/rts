@@ -17,10 +17,13 @@ public class RTS : ModuleRules
 			"OnlineSubsystem",
 			"OnlineSubsystemUtils",
 			"Landscape",
-			"LandscapeEditor",
-			"Foliage",
-			"LandscapeSplines"
+			"Foliage"
 		});
+
+		if (Target.Type == TargetType.Editor)
+		{
+			PublicDependencyModuleNames.Add("LandscapeEditor");
+		}
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 	}

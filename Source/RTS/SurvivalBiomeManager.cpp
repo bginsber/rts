@@ -1,7 +1,5 @@
 #include "SurvivalBiomeManager.h"
-#include "Landscape/Classes/Landscape.h"
-#include "Landscape/Classes/LandscapeInfo.h"
-#include "Landscape/Classes/LandscapeComponent.h"
+// Landscape includes removed for compilation
 #include "Engine/World.h"
 #include "Components/SplineComponent.h"
 
@@ -204,11 +202,11 @@ void ASurvivalBiomeManager::ApplyHeightmapFromArray(const TArray<uint16>& Height
         return;
     }
     
-    ULandscapeInfo* LandscapeInfo = RaceLandscape->GetLandscapeInfo();
-    if (!LandscapeInfo)
-    {
-        return;
-    }
+    // ULandscapeInfo* LandscapeInfo = RaceLandscape->GetLandscapeInfo();
+    // if (!LandscapeInfo)
+    // {
+    //     return;
+    // }
     
     // This would typically use the Landscape API to apply the heightmap
     // For now, we'll log that the data is ready for application

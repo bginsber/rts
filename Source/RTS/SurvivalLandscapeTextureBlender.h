@@ -85,7 +85,7 @@ protected:
     class ASurvivalBiomeManager* BiomeManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Texture Blending")
-    class ALandscape* TargetLandscape;
+    class AActor* TargetLandscape;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Texture Layers")
     TArray<FBiomeTextureLayer> BiomeTextureLayers;

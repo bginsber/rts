@@ -8,7 +8,7 @@ USurvivalAnimInstance::USurvivalAnimInstance()
 {
     Speed = 0.0f;
     bIsInAir = false;
-    MovementMode = EMovementMode::Walk;
+    MovementMode = ESurvivalMovementMode::Walk;
     Direction = 0.0f;
     StaminaPercentage = 1.0f;
     TetherTension = 0.0f;

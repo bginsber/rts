@@ -7,11 +7,11 @@
 #include "SurvivalLandscapeManager.generated.h"
 
 USTRUCT(BlueprintType)
-struct FHeightmapData
+struct FSurvivalHeightmapData
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere)
     TArray<uint16> HeightValues;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -23,7 +23,7 @@ struct FHeightmapData
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float MaxElevation;
 
-    FHeightmapData()
+    FSurvivalHeightmapData()
     {
         Width = 1009;
         Height = 1009;
@@ -46,7 +46,7 @@ protected:
     class ASurvivalBiomeManager* BiomeManager;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Landscape Generation")
-    class ALandscape* TargetLandscape;
+    class AActor* TargetLandscape;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Heightmap")
     int32 HeightmapResolution;
@@ -71,10 +71,10 @@ protected:
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Landscape Generation")
-    FHeightmapData GenerateHeightmapData();
+    FSurvivalHeightmapData GenerateHeightmapData();
 
     UFUNCTION(BlueprintCallable, Category = "Landscape Generation")
-    void ApplyHeightmapToLandscape(const FHeightmapData& HeightmapData);
+    void ApplyHeightmapToLandscape(const FSurvivalHeightmapData& HeightmapData);
 
     UFUNCTION(BlueprintCallable, Category = "Route Generation")
     void GenerateRaceRoute();
@@ -83,7 +83,7 @@ public:
     float GetElevationAtWorldLocation(const FVector& WorldLocation) const;
 
     UFUNCTION(BlueprintCallable, Category = "Elevation")
-    float SampleHeightmapAtUV(const FHeightmapData& HeightmapData, float U, float V) const;
+    float SampleHeightmapAtUV(const FSurvivalHeightmapData& HeightmapData, float U, float V) const;
 
 private:
     void InitializeRouteCheckpoints();
