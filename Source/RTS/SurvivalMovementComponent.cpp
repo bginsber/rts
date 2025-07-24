@@ -16,8 +16,14 @@ USurvivalMovementComponent::USurvivalMovementComponent()
     
     CurrentTerrainType = ETerrainType::Unknown;
     LastTerrainType = ETerrainType::Unknown;
+    CurrentBiome = EBiomeType::Forest;
+    LastBiome = EBiomeType::Forest;
     FootstepTimer = 0.0f;
     FootstepInterval = 0.5f; // Default footstep interval
+    
+    BiomeSpeedMultiplier = 1.0f;
+    BiomeStaminaMultiplier = 1.0f;
+    BiomeManager = nullptr;
     
     // Initialize sound assets to nullptr
     GrassFootstepSound = nullptr;
@@ -30,6 +36,12 @@ void USurvivalMovementComponent::BeginPlay()
 {
     Super::BeginPlay();
     BaseMaxSpeed = MaxWalkSpeed;
+    
+    // Find BiomeManager in the world if not manually assigned
+    if (!BiomeManager)
+    {
+        BiomeManager = Cast<ASurvivalBiomeManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ASurvivalBiomeManager::StaticClass()));
+    }
 }
 
 void USurvivalMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -39,6 +51,7 @@ void USurvivalMovementComponent::TickComponent(float DeltaTime, ELevelTick TickT
     if (bApplyTerrainEffects)
     {
         DetectTerrainType();
+        DetectBiomeEffects();
     }
 
     // Handle footstep audio timing
@@ -73,7 +86,7 @@ void USurvivalMovementComponent::ApplyStaminaModifiedSpeed(float StaminaPercenta
 
 float USurvivalMovementComponent::GetMaxSpeed() const
 {
-    float ModifiedSpeed = BaseMaxSpeed * TerrainResistanceMultiplier * StaminaDrainMultiplier;
+    float ModifiedSpeed = BaseMaxSpeed * TerrainResistanceMultiplier * StaminaDrainMultiplier * BiomeSpeedMultiplier;
     return FMath::Max(ModifiedSpeed, 50.0f); // Minimum movement speed
 }
 
@@ -166,4 +179,32 @@ void USurvivalMovementComponent::PlayFootstepSound()
             1.0f  // Pitch
         );
     }
+}
+
+void USurvivalMovementComponent::DetectBiomeEffects()
+{
+    if (!BiomeManager || !GetOwner())
+        return;
+
+    FVector CurrentLocation = GetOwner()->GetActorLocation();
+    EBiomeType NewBiome = BiomeManager->GetBiomeAtLocation(CurrentLocation);
+    
+    if (NewBiome != CurrentBiome)
+    {
+        LastBiome = CurrentBiome;
+        CurrentBiome = NewBiome;
+        
+        // Get biome zone data for multipliers
+        FBiomeZone BiomeData = BiomeManager->GetBiomeZoneAtLocation(CurrentLocation);
+        BiomeSpeedMultiplier = BiomeData.MovementSpeedMultiplier;
+        BiomeStaminaMultiplier = BiomeData.CalorieBurnMultiplier;
+        
+        UE_LOG(LogTemp, Log, TEXT("Entered %s biome - Speed: %.2fx, Stamina: %.2fx"), 
+               *UEnum::GetValueAsString(CurrentBiome), BiomeSpeedMultiplier, BiomeStaminaMultiplier);
+    }
+}
+
+EBiomeType USurvivalMovementComponent::GetCurrentBiome() const
+{
+    return CurrentBiome;
 }

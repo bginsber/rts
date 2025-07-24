@@ -76,7 +76,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Stamina")
     float GetCalorieDeficit() const { return FMath::Max(0.0f, -CurrentCalories); }
 
-    void UpdateCalorieBurn(float DeltaTime, int32 MovementMode, float TerrainMultiplier = 1.0f);
+    void UpdateCalorieBurn(float DeltaTime, int32 MovementMode, float TerrainMultiplier = 1.0f, float BiomeMultiplier = 1.0f);
 
 private:
     void CheckStaminaThresholds();

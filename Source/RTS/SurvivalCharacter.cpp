@@ -73,7 +73,8 @@ void ASurvivalCharacter::Tick(float DeltaTime)
     if (StaminaComponent && SurvivalMovementComponent)
     {
         float TerrainMultiplier = 1.0f / SurvivalMovementComponent->GetTerrainResistance();
-        StaminaComponent->UpdateCalorieBurn(DeltaTime, static_cast<int32>(CurrentMovementMode), TerrainMultiplier);
+        float BiomeMultiplier = SurvivalMovementComponent->GetBiomeStaminaMultiplier();
+        StaminaComponent->UpdateCalorieBurn(DeltaTime, static_cast<int32>(CurrentMovementMode), TerrainMultiplier, BiomeMultiplier);
         
         // Apply stamina effects to movement speed
         float StaminaPercentage = StaminaComponent->GetCaloriePercentage();

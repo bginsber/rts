@@ -53,7 +53,7 @@ void USurvivalStaminaComponent::AddCalories(float Amount)
     CheckStaminaThresholds();
 }
 
-void USurvivalStaminaComponent::UpdateCalorieBurn(float DeltaTime, int32 MovementMode, float TerrainMultiplier)
+void USurvivalStaminaComponent::UpdateCalorieBurn(float DeltaTime, int32 MovementMode, float TerrainMultiplier, float BiomeMultiplier)
 {
     float BurnMultiplier = 1.0f;
     
@@ -70,7 +70,7 @@ void USurvivalStaminaComponent::UpdateCalorieBurn(float DeltaTime, int32 Movemen
         break;
     }
 
-    float MovementBurn = (BaseMetabolicRate / 86400.0f) * BurnMultiplier * TerrainMultiplier * DeltaTime;
+    float MovementBurn = (BaseMetabolicRate / 86400.0f) * BurnMultiplier * TerrainMultiplier * BiomeMultiplier * DeltaTime;
     ConsumeCalories(MovementBurn);
 }
 

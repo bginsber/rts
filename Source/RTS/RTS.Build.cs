@@ -15,7 +15,11 @@ public class RTS : ModuleRules
 			"EnhancedInput",
 			"NetCore",
 			"OnlineSubsystem",
-			"OnlineSubsystemUtils"
+			"OnlineSubsystemUtils",
+			"Landscape",
+			"LandscapeEditor",
+			"Foliage",
+			"LandscapeSplines"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
