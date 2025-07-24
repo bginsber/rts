@@ -4,10 +4,14 @@
 #include "SurvivalStaminaComponent.h"
 #include "SurvivalTetherComponent.h"
 #include "SurvivalMovementComponent.h"
+#include "SurvivalPlayerState.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 
 ASurvivalCharacter::ASurvivalCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
+    bReplicates = true;
 
     // Initialize movement speeds based on design document
     WalkSpeed = 180.0f;  // 1.8 speed multiplier from base
@@ -32,6 +36,13 @@ ASurvivalCharacter::ASurvivalCharacter()
 
     // Set default movement speed
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void ASurvivalCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    
+    DOREPLIFETIME(ASurvivalCharacter, CurrentMovementMode);
 }
 
 void ASurvivalCharacter::BeginPlay()
@@ -67,6 +78,23 @@ void ASurvivalCharacter::Tick(float DeltaTime)
         // Apply stamina effects to movement speed
         float StaminaPercentage = StaminaComponent->GetCaloriePercentage();
         SurvivalMovementComponent->ApplyStaminaModifiedSpeed(StaminaPercentage);
+        
+        // Sync stamina with PlayerState on server
+        if (HasAuthority())
+        {
+            if (ASurvivalPlayerState* SurvivalPS = GetPlayerState<ASurvivalPlayerState>())
+            {
+                SurvivalPS->UpdateCalories(StaminaComponent->GetCurrentCalories());
+                
+                // Update distance traveled
+                if (GetVelocity().Size() > 10.0f) // Only count if actually moving
+                {
+                    float DistanceThisFrame = GetVelocity().Size() * DeltaTime;
+                    float NewTotalDistance = SurvivalPS->GetDistanceTraveled() + DistanceThisFrame;
+                    SurvivalPS->UpdateDistanceTraveled(NewTotalDistance);
+                }
+            }
+        }
     }
 }
 
@@ -82,8 +110,39 @@ void ASurvivalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void ASurvivalCharacter::SetMovementMode(EMovementMode NewMode)
 {
-    if (CurrentMovementMode != NewMode)
+    if (HasAuthority())
     {
+        // Server execution
+        if (CurrentMovementMode != NewMode)
+        {
+            CurrentMovementMode = NewMode;
+            UpdateMovementSpeed();
+            MulticastSetMovementMode(NewMode);
+        }
+    }
+    else
+    {
+        // Client requests server to change mode
+        ServerSetMovementMode(NewMode);
+    }
+}
+
+void ASurvivalCharacter::ServerSetMovementMode_Implementation(EMovementMode NewMode)
+{
+    SetMovementMode(NewMode);
+}
+
+bool ASurvivalCharacter::ServerSetMovementMode_Validate(EMovementMode NewMode)
+{
+    // Basic validation - mode should be valid enum value
+    return NewMode >= EMovementMode::Walk && NewMode <= EMovementMode::Sprint;
+}
+
+void ASurvivalCharacter::MulticastSetMovementMode_Implementation(EMovementMode NewMode)
+{
+    if (!HasAuthority())
+    {
+        // Client receives server's authoritative movement mode
         CurrentMovementMode = NewMode;
         UpdateMovementSpeed();
     }

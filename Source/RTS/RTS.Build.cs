@@ -12,7 +12,10 @@ public class RTS : ModuleRules
 			"Engine", 
 			"InputCore",
 			"HeadMountedDisplay",
-			"EnhancedInput"
+			"EnhancedInput",
+			"NetCore",
+			"OnlineSubsystem",
+			"OnlineSubsystemUtils"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

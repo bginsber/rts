@@ -25,8 +25,11 @@ class RTS_API ASurvivalCharacter : public ACharacter
 public:
     ASurvivalCharacter();
 
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
     virtual void BeginPlay() override;
+    virtual void Tick(float DeltaTime) override;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival")
     USurvivalStaminaComponent* StaminaComponent;
@@ -37,7 +40,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival")
     USurvivalMovementComponent* SurvivalMovementComponent;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+    UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Movement")
     EMovementMode CurrentMovementMode;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -63,11 +66,17 @@ private:
     float LastInputTime;
 
 public:
-    virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
     void SetMovementMode(EMovementMode NewMode);
+
+    // Server RPCs for networked movement
+    UFUNCTION(Server, Reliable, WithValidation, Category = "Movement")
+    void ServerSetMovementMode(EMovementMode NewMode);
+
+    UFUNCTION(NetMulticast, Reliable, Category = "Movement")
+    void MulticastSetMovementMode(EMovementMode NewMode);
 
     UFUNCTION(BlueprintCallable, Category = "Movement")
     EMovementMode GetCurrentMovementMode() const { return CurrentMovementMode; }
